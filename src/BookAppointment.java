@@ -4,11 +4,11 @@ import java.util.List;
 
 public class BookAppointment {
 
-    Hospital bookAppointment(HospitalType issue, float radius, Location homeLocation, int days){
-        //fetch all hospitals
+    static Hospital bookAppointment(HospitalType issue, float radius, Location homeLocation, int days){
+        //STEP1-fetch all hospitals
         List<Hospital> allHospitals = getAllHospitals();
 
-        //firstly filter the hospitals with given issue type and radius
+        //STEP2-filter the hospitals with given issue type and radius
         List<Hospital> filteredHospitals = new ArrayList<>();
         for(Hospital hospital: allHospitals){
             if(hospital.type==issue ||
@@ -16,7 +16,7 @@ public class BookAppointment {
                 filteredHospitals.add(hospital);
         }
 
-        //sort the hospitals based on the criteria
+        //STEP3-sort the hospitals based on the criteria
         Collections.sort(filteredHospitals, (h1, h2)-> {
             //first give preference to rating and then to distance
             return h1.rating!=h2.rating?(int)(h2.rating-h1.rating):
@@ -24,7 +24,7 @@ public class BookAppointment {
                             Location.getDistance(homeLocation, h2.hospitalLocation));
         });
 
-        //iterate through the hospitals to find the available timeSlot
+        //STEP4-iterate through the hospitals to find the available timeSlot
         for(Hospital hospital: filteredHospitals){
             if(hospital.isSlotAvailable(days))
                 return hospital;
@@ -33,7 +33,7 @@ public class BookAppointment {
     }
 
 
-    List<Hospital> getAllHospitals(){
+    static List<Hospital> getAllHospitals(){
 
         //In production level code, this list will be fetched from database.
         Hospital h1 = new Hospital("1", 4.3, HospitalType.ORTHOPEDICS, new Location());
@@ -47,4 +47,13 @@ public class BookAppointment {
 
         return list;
     }
+
+    public static void main(String[] args){
+        Hospital hospital = bookAppointment(HospitalType.DENTAL, 10.0F, new Location(), 2);
+
+        if(hospital!=null)
+            processPayment();
+    }
+
+    static void processPayment(){}
 }
